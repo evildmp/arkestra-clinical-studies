@@ -1,4 +1,40 @@
-*.log
-*.pot
+# Numerous always-ignore extensions
 *.pyc
-local_settings.py
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*.cache
+*~
+*#
+*.egg-info
+
+# OS or Editor folders
+.DS_Store
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+nbproject
+*.sublime-project
+*.sublime-workspace
+.tm_properties
+._*
+.fuse_hidden*
+
+# Folders to ignore
+.hg
+.svn
+.CVS
+.idea
+_assets
+_design
+_content
+_tmp
+dist
