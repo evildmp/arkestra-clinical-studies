@@ -5,9 +5,9 @@ from contacts_and_people.models import Person, Entity
 from arkestra_utilities.generic_models import (
     ArkestraGenericModel
     )
+from arkestra_utilities.mixins import URLModelMixin
 
-
-class ClinicalTrial(ArkestraGenericModel):
+class ClinicalTrial(ArkestraGenericModel, URLModelMixin):
 
     date = models.DateField(
         "Start date",
@@ -16,23 +16,10 @@ class ClinicalTrial(ArkestraGenericModel):
 
     end_date = models.DateField(null=True, blank=True)
 
-    please_contact = models.ManyToManyField(
-        "Trial managers",
-        Person,
-        related_name='%(class)s_person',
-        null=True, blank=True
-        )
-
     chief_investigators = models.ManyToManyField(
         Person,
-        related_name='%(class)s_person',
+        related_name='%(class)s_chief_investigator',
         null=True, blank=True
-        )
-
-    publish_to = models.ManyToManyField(
-        Entity, verbose_name="Also involved",
-        null=True, blank=True,
-        related_name="%(class)s_publish_to",
         )
 
     funding_body = models.ManyToManyField(
@@ -48,8 +35,8 @@ class ClinicalTrial(ArkestraGenericModel):
         )
 
     STATUSES = (
-        ("setup", "In setup")
-        ("recruiting", "Recruiting")
-        ("running", "Running")
-        ("closed", "Closed")
+        ("setup", "In setup"),
+        ("recruiting", "Recruiting"),
+        ("running", "Running"),
+        ("closed", "Closed"),
         )
