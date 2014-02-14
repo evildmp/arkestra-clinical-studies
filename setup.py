@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 setup(
     name='arkestra-clinical-trials',
     version='0.1',
-    packages=['clinical_trials'],
+    packages=['arkestra_clinical_trials'],
     include_package_data=True,
     license='BSD License',  # example license
     description='Manage and publish information clinical trials in Arkestra',
