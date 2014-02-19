@@ -38,3 +38,5 @@ _design
 _content
 _tmp
 dist
+filer_public_thumbnails
+filer_thumbnails
