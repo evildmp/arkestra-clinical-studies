@@ -1,30 +1,30 @@
-{% extends clinicaltrial.get_template %}
+{% extends trial.get_template %}
 {% load arkestra_date_tags typogrify_tags humanize thumbnail placeholder_tags %}
 
 {% block title %}
-	<title>{{ clinicaltrial }}</title>
+	<title>{{ trial }}</title>
 {% endblock %}
 
 {% block nav_local %}{% endblock nav_local %}
 
 {% block pagetitle %}
 	<h{{PAGE_TITLE_HEADING_LEVEL}}>
-        {{ clinicaltrial }}
+        {{ trial }}
     </h{{PAGE_TITLE_HEADING_LEVEL}}>
 
-	{% if clinicaltrial.summary %}
-   		<p class="subtitle">{{ clinicaltrial.summary }}</p>
+	{% if trial.summary %}
+   		<p class="subtitle">{{ trial.summary }}</p>
 	{% endif %}
 {% endblock pagetitle %}
 
 
 {% block main_page_body %}
-    {% thumbnail clinicaltrial.image.file sidebar_image_size subject_location=clinicaltrial.image.subject_location crop as image %}
+    {% thumbnail trial.image.file sidebar_image_size subject_location=trial.image.subject_location crop as image %}
 	{% with placeholder_width=generic_main_width %}
 		<div class="row columns3">
 	       	<div class="column firstcolumn doublecolumn">
 				{% block placeholder %}
-				    {% render_placeholder clinicaltrial.body %}
+				    {% render_placeholder trial.body %}
 				{% endblock placeholder %}
 			</div>
 			<div class="column lastcolumn">
@@ -35,35 +35,35 @@
 				{% endblock image %}
 				<dl class="not-indented">
                     <dt>Status</dt>
-                    <dd>{{ clinicaltrial.get_status_display }}
+                    <dd>{{ trial.get_status_display }}
 					<dt>Start date</dt>
-					<dd>{% date clinicaltrial.date %}</dd>
-					{% if clinicaltrial.please_contact.all %}
+					<dd>{% date trial.date %}</dd>
+					{% if trial.please_contact.all %}
 	 				    <dt>General enquiries</dt>
-	 				    {% for person in clinicaltrial.please_contact.all %}
+	 				    {% for person in trial.please_contact.all %}
 							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
 						{% endfor %}
 					{% endif %}
-					{% if clinicaltrial.chief_investigators.all %}
+					{% if trial.chief_investigators.all %}
 	 				    <dt>Chief inverstigators</dt>
-	 				    {% for person in clinicaltrial.chief_investigators.all %}
+	 				    {% for person in trial.chief_investigators.all %}
 							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
 						{% endfor %}
 					{% endif %}
-					{% if clinicaltrial.trial_managers.all %}
-	 				    <dt>Trial managers</dt>
-	 				    {% for person in clinicaltrial.trial_managers.all %}
+					{% if trial.trial_managers.all %}
+	 				    <dt>trial managers</dt>
+	 				    {% for person in trial.trial_managers.all %}
 							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
 						{% endfor %}
 					{% endif %}
 				</dl>
-				{% with clinicaltrial.links as links %}
+				{% with trial.links as links %}
 				    {% include "includes/related_links_list.html" %}
 		        {% endwith %}
 			</div>
 		</div>
 		<ul class = "news icons">
-			<li><a href = "{{ clinicaltrial.link_to_more }}">More {{ clinicaltrial.hosted_by.short_name }} clinical trials</a></li>
+			<li><a href = "{{ trial.link_to_more }}">More {{ trial.hosted_by.short_name }} clinical trials</a></li>
 		</ul>
 	{% endwith %}
 {% endblock main_page_body %}

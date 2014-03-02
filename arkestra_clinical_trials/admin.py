@@ -1,32 +1,54 @@
 from django.contrib import admin
 
+# these aren't all in fact mixins (it's misnamed) but they are useful
+# building blocks for the admin interface we'll create
 from arkestra_utilities.admin_mixins import (
-    GenericModelAdmin, GenericModelForm, fieldsets
+    WidgetifiedModelAdmin,
+    GenericModelForm,
+    fieldsets
     )
 
-from .models import ClinicalTrial, ClinicalTrialEntity
+from .models import Trial, TrialEntity, TrialType
 
 
-fieldsets["people"] = ['', {'fields': [
-    'please_contact',
-    'chief_investigators',
-    'trial_managers'
-    ]}]
-fieldsets["sponsors"] = ['', {'fields': ['sponsor', 'funding_body']}]
-fieldsets["basic"] = ['', {'fields': [
-    'title',
-    'short_title',
-    'summary',
-    'grant_value'
-    ]}]
-
-class ClinicalTrialsForm(GenericModelForm):
-    pass
+# on the modelform for Trials we inherit from GenericModelForm
+# and override the labels on couple of fields
+class TrialsForm(GenericModelForm):
+    def __init__(self, *args, **kwargs):
+        super(TrialsForm, self).__init__(*args, **kwargs)
+        self.fields["please_contact"].label = "Trial managers"
+        self.fields["hosted_by"].label = "Published by"
 
 
-class ClinicalTrialAdmin(GenericModelAdmin):
-    form = ClinicalTrialsForm
+# WidgetifiedModelAdmin provides some hooks and widgets for the more
+# fully-featured admin, such as tabs, autocomplete search
+# There's also a GenericModelAdmin available, but in this case we happen to
+# override all the attributes it sets, so there's no point
+class TrialAdmin(WidgetifiedModelAdmin):
+    form = TrialsForm
 
+    # these fieldsets are already defined, but we need to change them
+    fieldsets["people"] = ['', {'fields': [
+        'please_contact',
+        'chief_investigators',
+        ]}]
+    fieldsets["basic"] = ['', {'fields': [
+        'title',
+        'expanded_title',
+        'short_title',
+        'summary',
+        'grant_value',
+        'status',
+        'trialtype',
+        ]}]
+
+    # this is an entirely new fieldset
+    fieldsets["entities"] = ['', {'fields': [
+        'sponsor',
+        'funding_body',
+        'clinical_centre',
+        ]}]
+    # define the tabs for the admin
     tabs = (
         ['Basic', {
             'fieldsets': (
@@ -40,7 +62,7 @@ class ClinicalTrialAdmin(GenericModelAdmin):
             ['', {'fields': ['date', 'end_date']}]]
         }],
         ['Body', {'fieldsets': [fieldsets["body"]]}],
-        ['Sponsors & funders', {'fieldsets': [fieldsets["sponsors"]]}],
+        ['Sponsors & funders', {'fieldsets': [fieldsets["entities"]]}],
         ['Related people', {'fieldsets': [fieldsets["people"]]}],
         ['Where to Publish', {'fieldsets': [fieldsets["where_to_publish"]]}],
         ['Advanced Options', {'fieldsets': [
@@ -51,16 +73,42 @@ class ClinicalTrialAdmin(GenericModelAdmin):
 
     filter_horizontal = (
         'please_contact',
+        'chief_investigators',
         'publish_to',
         'sponsor',
         'funding_body',
-        'chief_investigators',
-        'trial_managers',
+        'clinical_centre',
+        'trialtype',
         )
 
-    related_search_fields = ['hosted_by', 'external_url']
+    search_fields = ['title', 'expanded_title', 'short_title']
     prepopulated_fields = {'slug': ['title']}
 
+    # autocomplete search fields
+    related_search_fields = ['hosted_by', 'external_url']
 
-admin.site.register(ClinicalTrial, ClinicalTrialAdmin)
-admin.site.register(ClinicalTrialEntity)
+
+class TrialsEntityAdmin(WidgetifiedModelAdmin):
+
+    basic_fieldset = [None, {'fields': [
+        'entity',
+        'publish_page',
+        'menu_title',
+        ]}]
+    page_intro_fieldset = [None, {
+        'fields': ['trials_page_intro'],
+        'classes': ['plugin-holder', 'plugin-holder-nopage']
+        }]
+
+    list_display = ('entity', 'publish_page')
+
+    tabs = [
+        ['Basic', {'fieldsets': [basic_fieldset]}],
+        ["Page introduction", {'fieldsets': [page_intro_fieldset]}],
+        ]
+    search_fields = ['entity']
+    related_search_fields = ['entity']
+
+admin.site.register(Trial, TrialAdmin)
+admin.site.register(TrialEntity, TrialsEntityAdmin)
+admin.site.register(TrialType)

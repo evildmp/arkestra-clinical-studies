@@ -58,3 +58,7 @@ PAGE_TITLE_HEADING_LEVEL = 1
 # The default (typically, the next down from the PAGE_TITLE_HEADING_LEVEL)
 IN_BODY_HEADING_LEVEL = 2
 PLUGIN_HEADING_LEVEL_DEFAULT = 2
+
+ARKESTRA_MENUS = [
+    'arkestra_clinical_trials.menu.TrialMenu',
+    ]

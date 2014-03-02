@@ -13,17 +13,16 @@ from cms.api import create_page
 
 from contacts_and_people.models import Entity
 
-from models import ClinicalTrial
-from lister import ClinicalTrialsList, ClinicalTrialsLister
-from views import clinical_trial, ClinicalTrialsArchiveView
+from models import Trial
+from lister import TrialsList, TrialsLister
+from views import clinical_trial, TrialsArchiveView
 
 
 # create a trial and test its attributes
-
-class ClinicalTrialTests(TestCase):
+class TrialTests(TestCase):
     def setUp(self):
         # create a clinical trial
-        self.trial = ClinicalTrial(
+        self.trial = Trial(
             title="Can teeth bite?",
             slug="can-teeth-bite",
             date=datetime.now(),
@@ -44,9 +43,9 @@ class ClinicalTrialTests(TestCase):
             )
 
 
-class ClinicalTrialListTests(TestCase):
+class TrialListTests(TestCase):
     def setUp(self):
-        self.item1 = ClinicalTrial(
+        self.item1 = Trial(
             title="newer",
             in_lists=True,
             published=True,
@@ -55,7 +54,7 @@ class ClinicalTrialListTests(TestCase):
             )
         self.item1.save()
 
-        self.item2 = ClinicalTrial(
+        self.item2 = Trial(
             title="older",
             in_lists=True,
             published=True,
@@ -64,7 +63,7 @@ class ClinicalTrialListTests(TestCase):
             )
         self.item2.save()
 
-        self.item3 = ClinicalTrial(
+        self.item3 = Trial(
             title="unpublished",
             in_lists=True,
             published=False,
@@ -73,7 +72,7 @@ class ClinicalTrialListTests(TestCase):
             )
         self.item1.save()
 
-        self.itemlist = ClinicalTrialsList(request=RequestFactory().get("/"))
+        self.itemlist = TrialsList(request=RequestFactory().get("/"))
 
     def test_build(self):
         self.itemlist.build()
@@ -84,9 +83,9 @@ class ClinicalTrialListTests(TestCase):
         )
 
     def test_lister_has_list(self):
-        lister = ClinicalTrialsLister(request=RequestFactory().get("/"))
+        lister = TrialsLister(request=RequestFactory().get("/"))
 
-        self.assertIsInstance(lister.lists[0], ClinicalTrialsList)
+        self.assertIsInstance(lister.lists[0], TrialsList)
 
 
 @override_settings(CMS_TEMPLATES=(('null.html', "Null"),))
@@ -107,7 +106,7 @@ class ClinicalEntityPagesTests(TestCase):
             website=home_page
             )
 
-        self.item1 = ClinicalTrial(
+        self.item1 = Trial(
             title="newer",
             in_lists=True,
             published=True,
@@ -116,7 +115,7 @@ class ClinicalEntityPagesTests(TestCase):
             )
         self.item1.save()
 
-        self.item2 = ClinicalTrial(
+        self.item2 = Trial(
             title="older",
             in_lists=True,
             published=True,
@@ -125,7 +124,7 @@ class ClinicalEntityPagesTests(TestCase):
             )
         self.item2.save()
 
-        self.item3 = ClinicalTrial(
+        self.item3 = Trial(
             title="unpublished",
             in_lists=True,
             published=False,
@@ -134,7 +133,7 @@ class ClinicalEntityPagesTests(TestCase):
             )
         self.item1.save()
 
-        self.itemlist = ClinicalTrialsList(request=RequestFactory().get("/"))
+        self.itemlist = TrialsList(request=RequestFactory().get("/"))
 
     def test_main_url(self):
         self.school.save()
@@ -153,13 +152,13 @@ class ClinicalEntityPagesTests(TestCase):
 
 
 class ReverseURLsTests(TestCase):
-    def test_clinicaltrials_reverse_url(self):
+    def test_Trials_reverse_url(self):
         self.assertEqual(
             reverse("clinical-trial", kwargs={"slug": "can-teeth-bite"}),
             "/clinical-trial/can-teeth-bite/"
             )
 
-    def testclinicaltrials_base_reverse_url(self):
+    def testTrials_base_reverse_url(self):
         self.assertEqual(
             reverse("clinical-trials-base"),
             "/clinical-trials/"
@@ -172,24 +171,24 @@ class ReverseURLsTests(TestCase):
             )
 
 class ResolveURLsTests(TestCase):
-    def test_resolve_clinicaltrial_url(self):
+    def test_resolve_Trial_url(self):
         resolver = resolve('/clinical-trial/can-teeth-bite/')
         self.assertEqual(resolver.view_name, "clinical-trial")
         self.assertEqual(resolver.func, clinical_trial)
 
-    def test_resolve_clinicaltrial_filter_list_base_url(self):
+    def test_resolve_Trial_filter_list_base_url(self):
         resolver = resolve('/clinical-trials/')
         self.assertEqual(resolver.view_name, "clinical-trials-base")
 
-    def test_resolve_clinicaltrial_filter_list_named_url(self):
+    def test_resolve_Trial_filter_list_named_url(self):
         resolver = resolve('/clinical-trials/some-slug/')
         self.assertEqual(resolver.view_name, "clinical-trials")
 
 
 @override_settings(CMS_TEMPLATES=(('null.html', "Null"),))
-class ClinicalTrialDetailTests(TestCase):
+class TrialDetailTests(TestCase):
     def setUp(self):
-        self.item1 = ClinicalTrial(
+        self.item1 = Trial(
             title="newer",
             slug="item1"
             )
@@ -228,7 +227,7 @@ class ClinicalTrialDetailTests(TestCase):
         self.item1.published = True
         self.item1.save()
         response = self.client.get('/clinical-trial/item1/')
-        self.assertEqual(response.context['clinicaltrial'], self.item1)
+        self.assertEqual(response.context['trial'], self.item1)
 
 
 class AdminInterfaceTests(TestCase):
@@ -243,10 +242,10 @@ class AdminInterfaceTests(TestCase):
 
         self.client.login(username="arkestra", password="arkestra")
 
-        response = self.client.get('/admin/arkestra_clinical_trials/clinicaltrial/add/')
+        response = self.client.get('/admin/arkestra_clinical_trials/trial/add/')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.context_data["title"],
-            u'Add clinical trial'
+            u'Add trial'
         )

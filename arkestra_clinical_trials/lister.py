@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from arkestra_utilities.generic_lister import (
-    ArkestraGenericLister, ArkestraGenericFilterList, ArkestraGenericFilterSet
+    ArkestraGenericLister, ArkestraGenericList, ArkestraGenericFilterList, ArkestraGenericFilterSet
     )
 
 from arkestra_utilities.settings import (
@@ -13,15 +13,15 @@ from arkestra_utilities.settings import (
     AGE_AT_WHICH_ITEMS_EXPIRE, MULTIPLE_ENTITY_MODE
     )
 
-from .models import ClinicalTrial
+from .models import Trial
 
 
-class ClinicalTrialsFilterSet(ArkestraGenericFilterSet):
+class TrialsFilterSet(ArkestraGenericFilterSet):
     fields = ['date']
 
 
-class ClinicalTrialsList(ArkestraGenericFilterList):
-    model = ClinicalTrial
+class TrialsList(ArkestraGenericFilterList):
+    model = Trial
     search_fields = [
         {
             "field_name": "text",
@@ -35,14 +35,25 @@ class ClinicalTrialsList(ArkestraGenericFilterList):
         ]
 
 
-class ClinicalTrialsLister(ArkestraGenericLister):
-    listkinds = [("clinicaltrials", ClinicalTrialsList)]
-    display = "clinicaltrials"
+class TrialsLister(ArkestraGenericLister):
+    listkinds = [("trials", TrialsList)]
+    display = "trials"
+
+class TrialsMenuList(ArkestraGenericList):
+    model = Trial
+    heading_text = _(u"News")
 
 
-# class ClinicalTrialsMenuLister(ArkestraGenericLister):
+class TrialsMenuLister(ArkestraGenericLister):
+    listkinds = [("trials", TrialsMenuList)]
+    display = "trials"
+
+
+
+
+# class TrialsMenuLister(ArkestraGenericLister):
 #     listkinds = [
-#         ("clinicaltrials", ClinicalTrialsListCurrent),
+#         ("Trials", TrialsListCurrent),
 #         ]
 #     display = "clinical trials"
 #     limit_to = LISTER_MAIN_PAGE_LIST_LENGTH
