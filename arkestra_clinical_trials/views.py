@@ -9,7 +9,6 @@ from .lister import TrialsLister
 
 
 class TrialsArchiveView(ArkestraGenericView):
-    auto_page_attribute = "ddd"
 
     def get(self, request, *args, **kwargs):
         self.get_entity()
