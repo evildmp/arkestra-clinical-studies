@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.contenttypes import generic
 
 # PlaceholderField is required so we can use django CMS plugins
 from cms.models.fields import PlaceholderField
@@ -10,7 +11,7 @@ from arkestra_utilities.generic_models import ArkestraGenericModel
 from arkestra_utilities.mixins import URLModelMixin
 
 # for the relationships to people and entities
-from contacts_and_people.models import Person, Entity
+from contacts_and_people.models import Person, Entity, PhoneContact
 
 
 # types will typcially include: "first human", "randomised", etc
@@ -19,6 +20,9 @@ class TrialType(models.Model):
         u"Name",
         max_length=100
         )
+
+    def __unicode__(self):
+        return self.name
 
 
 # The Trial model describes a clinical trial
@@ -91,6 +95,13 @@ class Trial(ArkestraGenericModel, URLModelMixin):
         max_length=25,
         null=True, blank=True,
         )
+
+    email = models.EmailField(
+        verbose_name="Email address", null=True, blank=True
+        )
+
+    # the phone_contacts field is taken from contacts_and_people
+    phone_contacts = generic.GenericRelation(PhoneContact)
 
 
 # If an entity is to publish clinical trials, we need a TrialEntity for it

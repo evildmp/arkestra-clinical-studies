@@ -87,6 +87,12 @@ class TrialListTests(TestCase):
 
         self.assertIsInstance(lister.lists[0], TrialsList)
 
+    def test_list_has_correct_filter_fields(self):
+        self.assertItemsEqual(
+            self.itemlist.filter_set.fields,
+            ["date", "status", "trialtype"]
+            )
+
 
 @override_settings(CMS_TEMPLATES=(('null.html', "Null"),))
 class ClinicalEntityPagesTests(TestCase):

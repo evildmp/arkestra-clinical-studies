@@ -33,27 +33,71 @@
                         <div><img src="{{ image.url }}" /></div>
                     {% endif %}
 				{% endblock image %}
+                {% if trial.email or trial.phone_contacts.all %}
+                    <h{{ IN_BODY_HEADING_LEVEL }}>Contact information</h{{ IN_BODY_HEADING_LEVEL }}>
+    				<dl class="not-indented">
+                        {% if trial.email %}
+                            <dt>Email address</dt>
+                            <dd><a href="mailto:{{ trial.email }}">{{ trial.email }}</a></dd>
+                            {% endif %}
+                            {% if trial.phone_contacts.all %}
+                            <dt>Telephone</dt>
+                            {% for phone_number in trial.phone_contacts.all %}
+                                <dd>+{{ phone_number.country_code }} {{ phone_number.area_code }} {{ phone_number.number }}{% if phone_number.internal_extension %}, ext. {{ phone_number.internal_extension }} {% endif %} {% if phone_number.label %} ({{ phone_number.label }}) {% endif %}</dd>
+                            {% endfor %}
+                        </dl>
+                    {% endif %}
+                {% endif %}
+                <h{{ IN_BODY_HEADING_LEVEL }}>Key data</h{{ IN_BODY_HEADING_LEVEL }}>
 				<dl class="not-indented">
                     <dt>Status</dt>
-                    <dd>{{ trial.get_status_display }}
-					<dt>Start date</dt>
-					<dd>{% date trial.date %}</dd>
+                    <dd>{{ trial.get_status_display }}</dd>
+    				{% if trial.date %}
+    					<dt>Start date</dt>
+    					<dd>{{ trial.date }}</dd>
+    				{% endif %}
+    				{% if trial.end_date %}
+    					<dt>End date</dt>
+    					<dd>{{ trial.end_date }}</dd>
+    				{% endif %}
+    				{% if trial.grant_value %}
+    					<dt>Grant value</dt>
+    					<dd>{{ trial.grant_value }}</dd>
+    				{% endif %}
+					{% if trial.trialtype.all %}
+	 				    <dt>Trial type</dt>
+	 				    {% for trialtype in trial.trialtype.all %}
+							<dd>{{ trialtype }}</dd>
+						{% endfor %}
+					{% endif %}
 					{% if trial.please_contact.all %}
 	 				    <dt>General enquiries</dt>
-	 				    {% for person in trial.please_contact.all %}
-							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
+	 				    {% for item in trial.please_contact.all %}
+							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
 						{% endfor %}
 					{% endif %}
 					{% if trial.chief_investigators.all %}
-	 				    <dt>Chief inverstigators</dt>
-	 				    {% for person in trial.chief_investigators.all %}
-							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
+	 				    <dt>Chief investigators</dt>
+	 				    {% for item in trial.chief_investigators.all %}
+							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
 						{% endfor %}
 					{% endif %}
-					{% if trial.trial_managers.all %}
-	 				    <dt>trial managers</dt>
-	 				    {% for person in trial.trial_managers.all %}
-							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
+					{% if trial.clinical_centre.all %}
+	 				    <dt>Clinical centre</dt>
+	 				    {% for item in trial.clinical_centre.all %}
+							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
+						{% endfor %}
+					{% endif %}
+					{% if trial.sponsor.all %}
+	 				    <dt>Sponsoring body</dt>
+	 				    {% for item in trial.sponsor.all %}
+							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
+						{% endfor %}
+					{% endif %}
+					{% if trial.funding_body.all %}
+	 				    <dt>Funding</dt>
+	 				    {% for item in trial.funding_body.all %}
+							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
 						{% endfor %}
 					{% endif %}
 				</dl>

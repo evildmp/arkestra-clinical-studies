@@ -5,7 +5,8 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from arkestra_utilities.generic_lister import (
-    ArkestraGenericLister, ArkestraGenericList, ArkestraGenericFilterList, ArkestraGenericFilterSet
+    ArkestraGenericLister, ArkestraGenericList, ArkestraGenericFilterList,
+    ArkestraGenericFilterSet
     )
 
 from arkestra_utilities.settings import (
@@ -17,10 +18,11 @@ from .models import Trial
 
 
 class TrialsFilterSet(ArkestraGenericFilterSet):
-    fields = ['date']
+    fields = ["date", "status", "trialtype"]
 
 
 class TrialsList(ArkestraGenericFilterList):
+    filter_set = TrialsFilterSet
     model = Trial
     search_fields = [
         {

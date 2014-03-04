@@ -5,8 +5,15 @@ from django.contrib import admin
 from arkestra_utilities.admin_mixins import (
     WidgetifiedModelAdmin,
     GenericModelForm,
-    fieldsets
+    fieldsets,
+    SupplyRequestMixin
     )
+
+# the PhoneContactInline is available from contacts_and_people
+from contacts_and_people.admin import PhoneContactInline
+
+# for the links tab
+from links.admin import ObjectLinkInline
 
 from .models import Trial, TrialEntity, TrialType
 
@@ -58,6 +65,10 @@ class TrialAdmin(WidgetifiedModelAdmin):
                 fieldsets["publishing_control"],
             ),
         }],
+        ('Contact information', {
+            'fieldsets': (fieldsets["email"],),
+            'inlines': [PhoneContactInline,]
+            }),
         ['When', {'fieldsets': [
             ['', {'fields': ['date', 'end_date']}]]
         }],
@@ -65,6 +76,7 @@ class TrialAdmin(WidgetifiedModelAdmin):
         ['Sponsors & funders', {'fieldsets': [fieldsets["entities"]]}],
         ['Related people', {'fieldsets': [fieldsets["people"]]}],
         ['Where to Publish', {'fieldsets': [fieldsets["where_to_publish"]]}],
+        ('Links', {'inlines': (ObjectLinkInline,),}),
         ['Advanced Options', {'fieldsets': [
             fieldsets["url"],  fieldsets["slug"]
             ]
