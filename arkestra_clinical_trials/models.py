@@ -24,6 +24,9 @@ class TrialType(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        ordering = ["name"]
+
 
 # The Trial model describes a clinical trial
 # It sub-classes ArkestraGenericModel and URLModelMixin - see the
