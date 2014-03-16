@@ -64,6 +64,37 @@ class Trial(ArkestraGenericModel, URLModelMixin):
         help_text="International Standard Randomised Controlled Trial Number",
         blank=True, null=True
         )
+    ukcrn = models.PositiveIntegerField(
+        verbose_name="UKCRN ID",
+        validators=[
+            RegexValidator(
+                regex="\d{5}",
+                message="ID must be four or five digits",
+                # for some reason, the validation error message is incorrect:
+                #     '%s' value must be an integer.
+                # unless a non-default code is provided
+                code="wrong"
+                )
+            ],
+        help_text="UK Clinical Research Network Study Portfolio",
+        blank=True, null=True
+        )
+    eudract = models.CharField(
+        verbose_name="EudraCT Number",
+        max_length=18,
+        validators=[
+            RegexValidator(
+                regex="^\d{4}-\d{6}-\d{2}$",
+                message="EudraCT Number must be in the form '2007-003877-21'",
+                # for some reason, the validation error message is incorrect:
+                #     '%s' value must be an integer.
+                # unless a non-default code is provided
+                code="wrong"
+                )
+            ],
+        help_text="EU Clinical Trials Register Number (format: '2007-003877-21')",
+        blank=True, null=True
+        )
     nct = models.CharField(
         verbose_name="NCT code",
         max_length=11,

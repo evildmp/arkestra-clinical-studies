@@ -59,6 +59,8 @@ class TrialAdmin(WidgetifiedModelAdmin):
         'short_title',
         'summary',
         'isrctn',
+        'ukcrn',
+        'eudract',
         'nct',
         'grant_value',
         'status',
