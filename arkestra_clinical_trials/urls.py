@@ -11,20 +11,12 @@ urlpatterns = patterns('arkestra_clinical_trials.views',
         name="clinical-trial"
         ),
 
-    # list of clinical trials (in "archive" view, i.e. the list will be
-    # paginated, filtered and searchable) for a named entity, e.g.
-    # haematology/clinicaltrials
+    # the view for an entity's clinical trials
+    # matches "clinical-trials" and "clinical-trials/wctu"
     url(
-        r"^clinical-trials/(?:(?P<slug>[-\w]+)/)$",
+        r"^clinical-trials/(?:(?P<slug>[-\w]+)/)?$",
         views.TrialsArchiveView.as_view(),
         name="clinical-trials"
         ),
-
-    # the same list, where no entity is given in the url
-    url(
-        r'^clinical-trials/$',
-        views.TrialsArchiveView.as_view(),
-        {"slug": None},
-        name="clinical-trials-base"
-        ),
     )
+

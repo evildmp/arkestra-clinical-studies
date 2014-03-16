@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.contenttypes import generic
+from django.core.validators import RegexValidator
 
 # PlaceholderField is required so we can use django CMS plugins
 from cms.models.fields import PlaceholderField
@@ -32,8 +33,13 @@ class TrialType(models.Model):
 # It sub-classes ArkestraGenericModel and URLModelMixin - see the
 # ArkestraGenericModel and URLModelMixin for more on what they provide
 class Trial(ArkestraGenericModel, URLModelMixin):
-    # the get_absolute_url() of URLModelMixin needs to know the url_path
-    url_path = "clinical-trial"
+    # the get_absolute_url() of URLModelMixin needs to know the view_name
+    view_name = "clinical-trial"
+
+    # the link_to_more() method of the ArkestraGenericModel needs to know
+    # where we can find more of these items - this *must* match the view name in
+    # urls
+    auto_page_view_name = "clinical-trials"
 
     # the ArkestraGenericModel already provides a title and optional
     # short_title; a clinical trial may not use the latter but will
@@ -41,6 +47,38 @@ class Trial(ArkestraGenericModel, URLModelMixin):
     expanded_title = models.CharField(
         max_length=255, null=True, blank=True,
         help_text=u"e.g. Man bites dog (if blank, will be copied from Title)"
+        )
+
+    isrctn = models.PositiveIntegerField(
+        verbose_name="ISRCTN",
+        validators=[
+            RegexValidator(
+                regex="^\d{8}$",
+                message="An ISRCTN must be an 8-digit number",
+                # for some reason, the validation error message is incorrect:
+                #     '%s' value must be an integer.
+                # unless a non-default code is provided
+                code="wrong"
+                )
+            ],
+        help_text="International Standard Randomised Controlled Trial Number",
+        blank=True, null=True
+        )
+    nct = models.CharField(
+        verbose_name="NCT code",
+        max_length=11,
+        validators=[
+            RegexValidator(
+                regex="^NCT\d{8}$",
+                message="Must begin 'NCT' and be followed by 8 digits",
+                # for some reason, the validation error message is incorrect:
+                #     '%s' value must be an integer.
+                # unless a non-default code is provided
+                code="wrong"
+                )
+            ],
+        help_text="ClinicalTrials.gov registry code (begins 'NCT')",
+        blank=True, null=True
         )
 
     # dates are optional - we don't always know when a trial will begin/end

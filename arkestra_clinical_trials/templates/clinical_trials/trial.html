@@ -9,7 +9,7 @@
 
 {% block pagetitle %}
 	<h{{PAGE_TITLE_HEADING_LEVEL}}>
-        {{ trial }}
+        {{ trial }}{% if trial.expanded_title %}: {{ trial.expanded_title }}{% endif %}
     </h{{PAGE_TITLE_HEADING_LEVEL}}>
 
 	{% if trial.summary %}
@@ -52,6 +52,16 @@
 				<dl class="not-indented">
                     <dt>Status</dt>
                     <dd>{{ trial.get_status_display }}</dd>
+    				{% if trial.isrctn %}
+    					<dt>ISRCTN {{ trial.isrctn }}</dt>
+    					<dd><a href="http://www.controlled-trials.com/ISRCTN{{ trial.isrctn }}/">ControlledTrials.com</a></dd>
+    					<dd><a href="http://www.ukctg.nihr.ac.uk/trialdetails/ISRCTN{{ trial.isrctn }}/">UK Clinical Trials Gateway</a></dd>
+    				{% endif %}
+    				{% if trial.nct %}
+    					<dt>ClinicalTrials.gov</dt>
+    					<dd><a href="http://clinicaltrials.gov/show/{{ trial.nct }}/">Trial number {{ trial.nct }}</a></dd>
+    				{% endif %}
+
     				{% if trial.date %}
     					<dt>Start date</dt>
     					<dd>{{ trial.date }}</dd>

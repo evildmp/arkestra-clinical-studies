@@ -42,6 +42,17 @@ class TrialTests(TestCase):
             settings.CMS_TEMPLATES[0][0]
             )
 
+    def test_link_to_more(self):
+        self.assertEqual(
+            self.trial.auto_page_view_name,
+            "clinical-trials"
+            )
+        self.trial.hosted_by = Entity(slug="slug")
+        self.assertEqual(
+            self.trial.link_to_more(),
+            "/clinical-trials/slug/"
+            )
+
 
 class TrialListTests(TestCase):
     def setUp(self):
@@ -157,8 +168,23 @@ class ClinicalEntityPagesTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class ResolveURLsTests(TestCase):
+    def test_resolve_trial_url(self):
+        resolver = resolve('/clinical-trial/can-teeth-bite/')
+        self.assertEqual(resolver.view_name, "clinical-trial")
+        self.assertEqual(resolver.func, clinical_trial)
+
+    def test_resolve_trial_filter_list_base_url(self):
+        resolver = resolve('/clinical-trials/')
+        self.assertEqual(resolver.view_name, "clinical-trials")
+
+    def test_resolve_trial_filter_list_named_url(self):
+        resolver = resolve('/clinical-trials/some-slug/')
+        self.assertEqual(resolver.view_name, "clinical-trials")
+
+
 class ReverseURLsTests(TestCase):
-    def test_Trials_reverse_url(self):
+    def test_trials_reverse_url(self):
         self.assertEqual(
             reverse("clinical-trial", kwargs={"slug": "can-teeth-bite"}),
             "/clinical-trial/can-teeth-bite/"
@@ -166,7 +192,7 @@ class ReverseURLsTests(TestCase):
 
     def testTrials_base_reverse_url(self):
         self.assertEqual(
-            reverse("clinical-trials-base"),
+            reverse("clinical-trials"),
             "/clinical-trials/"
             )
 
@@ -175,20 +201,6 @@ class ReverseURLsTests(TestCase):
             reverse("clinical-trials", kwargs={"slug": "some-slug"}),
             "/clinical-trials/some-slug/"
             )
-
-class ResolveURLsTests(TestCase):
-    def test_resolve_Trial_url(self):
-        resolver = resolve('/clinical-trial/can-teeth-bite/')
-        self.assertEqual(resolver.view_name, "clinical-trial")
-        self.assertEqual(resolver.func, clinical_trial)
-
-    def test_resolve_Trial_filter_list_base_url(self):
-        resolver = resolve('/clinical-trials/')
-        self.assertEqual(resolver.view_name, "clinical-trials-base")
-
-    def test_resolve_Trial_filter_list_named_url(self):
-        resolver = resolve('/clinical-trials/some-slug/')
-        self.assertEqual(resolver.view_name, "clinical-trials")
 
 
 @override_settings(CMS_TEMPLATES=(('null.html', "Null"),))

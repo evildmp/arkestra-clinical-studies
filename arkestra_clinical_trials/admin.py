@@ -19,12 +19,26 @@ from .models import Trial, TrialEntity, TrialType
 
 
 # on the modelform for Trials we inherit from GenericModelForm
-# and override the labels on couple of fields
+# so we need to override the labels and help_text on a few fields
 class TrialsForm(GenericModelForm):
     def __init__(self, *args, **kwargs):
         super(TrialsForm, self).__init__(*args, **kwargs)
+
         self.fields["please_contact"].label = "Trial managers"
         self.fields["hosted_by"].label = "Published by"
+
+        self.fields["title"].help_text = "e.g. POETIC"
+        self.fields["expanded_title"].help_text = """
+            e.g. Point of Care Testing for Urinary Tract Infections In
+            Primary care
+            """
+        self.fields["short_title"].help_text = """
+            If necessary, a shorter version of the Title
+            """
+        self.fields["summary"].help_text = """
+            e.g. POETIC is part of a larger study, R-GNOSIS, and
+            funded by the EU Seventh Framework Programme (FP7).
+            """
 
 
 # WidgetifiedModelAdmin provides some hooks and widgets for the more
@@ -44,6 +58,8 @@ class TrialAdmin(WidgetifiedModelAdmin):
         'expanded_title',
         'short_title',
         'summary',
+        'isrctn',
+        'nct',
         'grant_value',
         'status',
         'trialtype',
