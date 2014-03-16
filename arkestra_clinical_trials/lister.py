@@ -35,6 +35,8 @@ class TrialsList(ArkestraGenericFilterList):
                 ],
             },
         ]
+    # we want to override the generic list item template
+    item_template = "clinical_trials/trial_list_item.html"
 
 
 class TrialsLister(ArkestraGenericLister):
