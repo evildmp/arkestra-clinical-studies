@@ -190,7 +190,7 @@ class ReverseURLsTests(TestCase):
             "/clinical-trial/can-teeth-bite/"
             )
 
-    def testTrials_base_reverse_url(self):
+    def test_trials_base_reverse_url(self):
         self.assertEqual(
             reverse("clinical-trials"),
             "/clinical-trials/"
