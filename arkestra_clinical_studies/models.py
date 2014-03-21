@@ -8,7 +8,7 @@ from cms.models.fields import PlaceholderField
 # all the useful fields and methods of the generic model
 from arkestra_utilities.generic_models import ArkestraGenericModel
 
-# url fields and methods; mechanisms for referirng to external trials
+# url fields and methods; mechanisms for referirng to external studies
 from arkestra_utilities.mixins import URLModelMixin
 
 # for the relationships to people and entities
@@ -16,7 +16,7 @@ from contacts_and_people.models import Person, Entity, PhoneContact
 
 
 # types will typcially include: "first human", "randomised", etc
-class TrialType(models.Model):
+class StudyType(models.Model):
     name = models.CharField(
         u"Name",
         max_length=100
@@ -29,20 +29,20 @@ class TrialType(models.Model):
         ordering = ["name"]
 
 
-# The Trial model describes a clinical trial
+# The Study model describes a clinical study
 # It sub-classes ArkestraGenericModel and URLModelMixin - see the
 # ArkestraGenericModel and URLModelMixin for more on what they provide
-class Trial(ArkestraGenericModel, URLModelMixin):
+class Study(ArkestraGenericModel, URLModelMixin):
     # the get_absolute_url() of URLModelMixin needs to know the view_name
-    view_name = "clinical-trial"
+    view_name = "clinical-study"
 
     # the link_to_more() method of the ArkestraGenericModel needs to know
     # where we can find more of these items - this *must* match the view name in
     # urls
-    auto_page_view_name = "clinical-trials"
+    auto_page_view_name = "clinical-studies"
 
     # the ArkestraGenericModel already provides a title and optional
-    # short_title; a clinical trial may not use the latter but will
+    # short_title; a clinical study may not use the latter but will
     # usually have an expanded_title too
     expanded_title = models.CharField(
         max_length=255, null=True, blank=True,
@@ -61,7 +61,7 @@ class Trial(ArkestraGenericModel, URLModelMixin):
                 code="wrong"
                 )
             ],
-        help_text="International Standard Randomised Controlled Trial Number",
+        help_text="International Standard Randomised Controlled Study Number",
         blank=True, null=True
         )
     ukcrn = models.PositiveIntegerField(
@@ -92,7 +92,7 @@ class Trial(ArkestraGenericModel, URLModelMixin):
                 code="wrong"
                 )
             ],
-        help_text="EU Clinical Trials Register Number (format: '2007-003877-21')",
+        help_text="EU Clinical Studies Register Number (format: '2007-003877-21')",
         blank=True, null=True
         )
     nct = models.CharField(
@@ -108,16 +108,16 @@ class Trial(ArkestraGenericModel, URLModelMixin):
                 code="wrong"
                 )
             ],
-        help_text="ClinicalTrials.gov registry code (begins 'NCT')",
+        help_text="ClinicalStudies.gov registry code (begins 'NCT')",
         blank=True, null=True
         )
 
-    # dates are optional - we don't always know when a trial will begin/end
+    # dates are optional - we don't always know when a study will begin/end
     date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 
-    trialtype = models.ManyToManyField(
-        TrialType, verbose_name="Trial type",
+    studytype = models.ManyToManyField(
+        StudyType, verbose_name="Study type",
         null=True, blank=True,
         )
 
@@ -137,7 +137,7 @@ class Trial(ArkestraGenericModel, URLModelMixin):
         )
 
     # the ArkestraGenericModel provides a please_contact field, which we
-    # re-label in the admin for trial_managers
+    # re-label in the admin for study_managers
     # note the way of providing related_names, which helps ensure uniqueness
     chief_investigators = models.ManyToManyField(
         Person,
@@ -176,17 +176,17 @@ class Trial(ArkestraGenericModel, URLModelMixin):
     phone_contacts = generic.GenericRelation(PhoneContact)
 
 
-# If an entity is to publish clinical trials, we need a TrialEntity for it
+# If an entity is to publish clinical studies, we need a StudyEntity for it
 # to control and manage this
-class TrialEntity(models.Model):
+class StudyEntity(models.Model):
     class Meta:
-        verbose_name = "Entity that publishes trials"
-        verbose_name_plural = "Entities that publish trials"
+        verbose_name = "Entity that publishes studies"
+        verbose_name_plural = "Entities that publish studies"
 
     #one-to-one link to contacts_and_people.Person
     entity = models.OneToOneField(
         'contacts_and_people.Entity',
-        primary_key=True, related_name="trial_entity",
+        primary_key=True, related_name="study_entity",
         help_text=
         """
         Do not under any circumstances change this field. No, really. Don't
@@ -195,23 +195,23 @@ class TrialEntity(models.Model):
         )
 
     # in this case, publish_page must be selected in order for the menu to be
-    # created. This is determined by the menu.TrialMenu class. Similarly, its
+    # created. This is determined by the menu.StudyMenu class. Similarly, its
     # menu_title is also configurable here.
     publish_page = models.BooleanField(
-        u"Publish an automatic clinical trials page",
+        u"Publish an automatic clinical studies page",
         default=False,
         )
     menu_title = models.CharField(
         u"Title",
         max_length=50,
-        default="Clinical trials"
+        default="Clinical studies"
         )
 
-    # each entity's main clinical trials page can have a placeholder for
+    # each entity's main clinical studies page can have a placeholder for
     # django CMS plugins, if wanted
-    trials_page_intro = PlaceholderField(
+    studies_page_intro = PlaceholderField(
         'body',
-        related_name="trials_page_intro",
+        related_name="studies_page_intro",
         )
 
     # we just get the name from the entity

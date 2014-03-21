@@ -15,16 +15,16 @@ from contacts_and_people.admin import PhoneContactInline
 # for the links tab
 from links.admin import ObjectLinkInline
 
-from .models import Trial, TrialEntity, TrialType
+from .models import Study, StudyEntity, StudyType
 
 
-# on the modelform for Trials we inherit from GenericModelForm
+# on the modelform for Studies we inherit from GenericModelForm
 # so we need to override the labels and help_text on a few fields
-class TrialsForm(GenericModelForm):
+class StudiesForm(GenericModelForm):
     def __init__(self, *args, **kwargs):
-        super(TrialsForm, self).__init__(*args, **kwargs)
+        super(StudiesForm, self).__init__(*args, **kwargs)
 
-        self.fields["please_contact"].label = "Trial managers"
+        self.fields["please_contact"].label = "Study managers"
         self.fields["hosted_by"].label = "Published by"
 
         self.fields["title"].help_text = "e.g. POETIC"
@@ -45,8 +45,8 @@ class TrialsForm(GenericModelForm):
 # fully-featured admin, such as tabs, autocomplete search
 # There's also a GenericModelAdmin available, but in this case we happen to
 # override all the attributes it sets, so there's no point
-class TrialAdmin(WidgetifiedModelAdmin):
-    form = TrialsForm
+class StudyAdmin(WidgetifiedModelAdmin):
+    form = StudiesForm
 
     # these fieldsets are already defined, but we need to change them
     fieldsets["people"] = ['', {'fields': [
@@ -64,7 +64,7 @@ class TrialAdmin(WidgetifiedModelAdmin):
         'nct',
         'grant_value',
         'status',
-        'trialtype',
+        'studytype',
         ]}]
 
     # this is an entirely new fieldset
@@ -108,7 +108,7 @@ class TrialAdmin(WidgetifiedModelAdmin):
         'sponsor',
         'funding_body',
         'clinical_centre',
-        'trialtype',
+        'studytype',
         )
 
     search_fields = ['title', 'expanded_title', 'short_title']
@@ -118,7 +118,7 @@ class TrialAdmin(WidgetifiedModelAdmin):
     related_search_fields = ['hosted_by', 'external_url']
 
 
-class TrialsEntityAdmin(WidgetifiedModelAdmin):
+class StudiesEntityAdmin(WidgetifiedModelAdmin):
 
     basic_fieldset = [None, {'fields': [
         'entity',
@@ -126,7 +126,7 @@ class TrialsEntityAdmin(WidgetifiedModelAdmin):
         'menu_title',
         ]}]
     page_intro_fieldset = [None, {
-        'fields': ['trials_page_intro'],
+        'fields': ['studies_page_intro'],
         'classes': ['plugin-holder', 'plugin-holder-nopage']
         }]
 
@@ -139,6 +139,6 @@ class TrialsEntityAdmin(WidgetifiedModelAdmin):
     search_fields = ['entity']
     related_search_fields = ['entity']
 
-admin.site.register(Trial, TrialAdmin)
-admin.site.register(TrialEntity, TrialsEntityAdmin)
-admin.site.register(TrialType)
+admin.site.register(Study, StudyAdmin)
+admin.site.register(StudyEntity, StudiesEntityAdmin)
+admin.site.register(StudyType)

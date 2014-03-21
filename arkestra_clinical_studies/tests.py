@@ -13,50 +13,50 @@ from cms.api import create_page
 
 from contacts_and_people.models import Entity
 
-from models import Trial
-from lister import TrialsList, TrialsLister
-from views import clinical_trial, TrialsArchiveView
+from models import Study
+from lister import StudiesList, StudiesLister
+from views import clinical_study, StudiesArchiveView
 
 
-# create a trial and test its attributes
-class TrialTests(TestCase):
+# create a study and test its attributes
+class StudyTests(TestCase):
     def setUp(self):
-        # create a clinical trial
-        self.trial = Trial(
+        # create a clinical study
+        self.study = Study(
             title="Can teeth bite?",
             slug="can-teeth-bite",
             date=datetime.now(),
             )
 
     def test_generic_attributes(self):
-        self.trial.save()
+        self.study.save()
         # the item has no informative content
-        self.assertEqual(self.trial.is_uninformative, True)
+        self.assertEqual(self.study.is_uninformative, True)
 
         # no Entities in the database, so this can't be hosted_by anything
-        self.assertEqual(self.trial.hosted_by, None)
+        self.assertEqual(self.study.hosted_by, None)
 
         #  no Entities in the database, so default to settings's template
         self.assertEqual(
-            self.trial.get_template,
+            self.study.get_template,
             settings.CMS_TEMPLATES[0][0]
             )
 
     def test_link_to_more(self):
         self.assertEqual(
-            self.trial.auto_page_view_name,
-            "clinical-trials"
+            self.study.auto_page_view_name,
+            "clinical-studies"
             )
-        self.trial.hosted_by = Entity(slug="slug")
+        self.study.hosted_by = Entity(slug="slug")
         self.assertEqual(
-            self.trial.link_to_more(),
-            "/clinical-trials/slug/"
+            self.study.link_to_more(),
+            "/clinical-studies/slug/"
             )
 
 
-class TrialListTests(TestCase):
+class StudyListTests(TestCase):
     def setUp(self):
-        self.item1 = Trial(
+        self.item1 = Study(
             title="newer",
             in_lists=True,
             published=True,
@@ -65,7 +65,7 @@ class TrialListTests(TestCase):
             )
         self.item1.save()
 
-        self.item2 = Trial(
+        self.item2 = Study(
             title="older",
             in_lists=True,
             published=True,
@@ -74,7 +74,7 @@ class TrialListTests(TestCase):
             )
         self.item2.save()
 
-        self.item3 = Trial(
+        self.item3 = Study(
             title="unpublished",
             in_lists=True,
             published=False,
@@ -83,7 +83,7 @@ class TrialListTests(TestCase):
             )
         self.item1.save()
 
-        self.itemlist = TrialsList(request=RequestFactory().get("/"))
+        self.itemlist = StudiesList(request=RequestFactory().get("/"))
 
     def test_build(self):
         self.itemlist.build()
@@ -94,14 +94,14 @@ class TrialListTests(TestCase):
         )
 
     def test_lister_has_list(self):
-        lister = TrialsLister(request=RequestFactory().get("/"))
+        lister = StudiesLister(request=RequestFactory().get("/"))
 
-        self.assertIsInstance(lister.lists[0], TrialsList)
+        self.assertIsInstance(lister.lists[0], StudiesList)
 
     def test_list_has_correct_filter_fields(self):
         self.assertItemsEqual(
             self.itemlist.filter_set.fields,
-            ["date", "status", "trialtype"]
+            ["date", "status", "studytype"]
             )
 
 
@@ -123,7 +123,7 @@ class ClinicalEntityPagesTests(TestCase):
             website=home_page
             )
 
-        self.item1 = Trial(
+        self.item1 = Study(
             title="newer",
             in_lists=True,
             published=True,
@@ -132,7 +132,7 @@ class ClinicalEntityPagesTests(TestCase):
             )
         self.item1.save()
 
-        self.item2 = Trial(
+        self.item2 = Study(
             title="older",
             in_lists=True,
             published=True,
@@ -141,7 +141,7 @@ class ClinicalEntityPagesTests(TestCase):
             )
         self.item2.save()
 
-        self.item3 = Trial(
+        self.item3 = Study(
             title="unpublished",
             in_lists=True,
             published=False,
@@ -150,11 +150,11 @@ class ClinicalEntityPagesTests(TestCase):
             )
         self.item1.save()
 
-        self.itemlist = TrialsList(request=RequestFactory().get("/"))
+        self.itemlist = StudiesList(request=RequestFactory().get("/"))
 
     def test_main_url(self):
         self.school.save()
-        response = self.client.get('/clinical-trials/')
+        response = self.client.get('/clinical-studies/')
         self.assertEqual(response.status_code, 200)
 
         self.assertItemsEqual(
@@ -164,49 +164,49 @@ class ClinicalEntityPagesTests(TestCase):
 
     def test_entity_url(self):
         self.school.save()
-        response = self.client.get('/clinical-trials/medicine/')
+        response = self.client.get('/clinical-studies/medicine/')
         self.assertEqual(response.status_code, 200)
 
 
 class ResolveURLsTests(TestCase):
-    def test_resolve_trial_url(self):
-        resolver = resolve('/clinical-trial/can-teeth-bite/')
-        self.assertEqual(resolver.view_name, "clinical-trial")
-        self.assertEqual(resolver.func, clinical_trial)
+    def test_resolve_study_url(self):
+        resolver = resolve('/clinical-study/can-teeth-bite/')
+        self.assertEqual(resolver.view_name, "clinical-study")
+        self.assertEqual(resolver.func, clinical_study)
 
-    def test_resolve_trial_filter_list_base_url(self):
-        resolver = resolve('/clinical-trials/')
-        self.assertEqual(resolver.view_name, "clinical-trials")
+    def test_resolve_study_filter_list_base_url(self):
+        resolver = resolve('/clinical-studies/')
+        self.assertEqual(resolver.view_name, "clinical-studies")
 
-    def test_resolve_trial_filter_list_named_url(self):
-        resolver = resolve('/clinical-trials/some-slug/')
-        self.assertEqual(resolver.view_name, "clinical-trials")
+    def test_resolve_study_filter_list_named_url(self):
+        resolver = resolve('/clinical-studies/some-slug/')
+        self.assertEqual(resolver.view_name, "clinical-studies")
 
 
 class ReverseURLsTests(TestCase):
-    def test_trials_reverse_url(self):
+    def test_studies_reverse_url(self):
         self.assertEqual(
-            reverse("clinical-trial", kwargs={"slug": "can-teeth-bite"}),
-            "/clinical-trial/can-teeth-bite/"
+            reverse("clinical-study", kwargs={"slug": "can-teeth-bite"}),
+            "/clinical-study/can-teeth-bite/"
             )
 
-    def test_trials_base_reverse_url(self):
+    def test_studies_base_reverse_url(self):
         self.assertEqual(
-            reverse("clinical-trials"),
-            "/clinical-trials/"
+            reverse("clinical-studies"),
+            "/clinical-studies/"
             )
 
     def test_news_archive_named_entity_reverse_url(self):
         self.assertEqual(
-            reverse("clinical-trials", kwargs={"slug": "some-slug"}),
-            "/clinical-trials/some-slug/"
+            reverse("clinical-studies", kwargs={"slug": "some-slug"}),
+            "/clinical-studies/some-slug/"
             )
 
 
 @override_settings(CMS_TEMPLATES=(('null.html', "Null"),))
-class TrialDetailTests(TestCase):
+class StudyDetailTests(TestCase):
     def setUp(self):
-        self.item1 = Trial(
+        self.item1 = Study(
             title="newer",
             slug="item1"
             )
@@ -219,33 +219,33 @@ class TrialDetailTests(TestCase):
         self.adminuser.is_staff = True
         self.adminuser.save()
 
-    def test_unpublished_clinical_trial_404(self):
+    def test_unpublished_clinical_study_404(self):
         self.item1.save()
 
-        response = self.client.get("/clinical-trial/item1/")
+        response = self.client.get("/clinical-study/item1/")
         self.assertEqual(response.status_code, 404)
 
-    def test_unpublished_clinical_trial_200_for_admin(self):
+    def test_unpublished_clinical_study_200_for_admin(self):
         self.item1.save()
 
         # log in a staff user
         self.client.login(username='arkestra', password='arkestra')
-        response = self.client.get('/clinical-trial/item1/')
+        response = self.client.get('/clinical-study/item1/')
         self.assertEqual(response.status_code, 200)
 
-    def test_published_clinical_trial_200_for_everyone(self):
+    def test_published_clinical_study_200_for_everyone(self):
         self.item1.published = True
         self.item1.save()
 
         # Check that the response is 200 OK.
-        response = self.client.get('/clinical-trial/item1/')
+        response = self.client.get('/clinical-study/item1/')
         self.assertEqual(response.status_code, 200)
 
-    def test_published_clinical_trial_context(self):
+    def test_published_clinical_study_context(self):
         self.item1.published = True
         self.item1.save()
-        response = self.client.get('/clinical-trial/item1/')
-        self.assertEqual(response.context['trial'], self.item1)
+        response = self.client.get('/clinical-study/item1/')
+        self.assertEqual(response.context['study'], self.item1)
 
 
 class AdminInterfaceTests(TestCase):
@@ -260,10 +260,10 @@ class AdminInterfaceTests(TestCase):
 
         self.client.login(username="arkestra", password="arkestra")
 
-        response = self.client.get('/admin/arkestra_clinical_trials/trial/add/')
+        response = self.client.get('/admin/arkestra_clinical_studies/study/add/')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.context_data["title"],
-            u'Add trial'
+            u'Add study'
         )

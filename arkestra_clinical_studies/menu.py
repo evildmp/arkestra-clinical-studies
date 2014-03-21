@@ -1,11 +1,11 @@
-from models import TrialEntity
-from lister import TrialsMenuLister
+from models import StudyEntity
+from lister import StudiesMenuLister
 
 
-class TrialMenu(object):
+class StudyMenu(object):
     # this must match the url for an entity's view of its clinical trials in
     # urls.py
-    url = "clinical-trials"
+    url = "clinical-studies"
 
     # We have to make two important decisions here. Should we check:
     # 1. for each Entity, whether this item will appear in its menu?
@@ -17,8 +17,8 @@ class TrialMenu(object):
     #    if lister is not specified, we can create the menu item; otherwise we
     #    have to invoke the lister that checks if there's anything to display
 
-    entity_model = TrialEntity
-    lister = TrialsMenuLister
+    entity_model = StudyEntity
+    lister = StudiesMenuLister
 
     # Other attributes:
     #
