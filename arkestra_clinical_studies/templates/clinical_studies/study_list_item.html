@@ -3,15 +3,13 @@
 
 {% block item_title %}
     {% if "details" in lister.item_format and item.is_uninformative %}
-        <span class="title">{{ item.short_title|typogrify }}</span>
+        <span class="title">{{ item|typogrify }}</span>
     {% else %}
 		{% if item.external_url %}
-			<a
-                class="external title"
-                href="{{ item.get_absolute_url }}"
-                >
-                {{item.short_title}}
-            </a> -
+			<a  class="external title"
+                href="{{ item.get_absolute_url }}">
+                {{ item|typogrify }}
+            </a>
             <span class="site-name">
                 {{ item.external_url.external_site }}
             </span>
@@ -19,7 +17,7 @@
 			<a
                 class = "title"
                 href="{{ item.get_absolute_url }}">
-                {{item.short_title|typogrify}}
+                {{item|typogrify}}
             </a>
 		{% endif %}
         {% if item.expanded_title %}<span class="study-expanded-title">{{ item.expanded_title }}</span>{% endif %}
