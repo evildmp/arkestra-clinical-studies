@@ -7,17 +7,17 @@ from arkestra_utilities.generic_lister import (
     )
 from arkestra_utilities.settings import MULTIPLE_ENTITY_MODE
 
-from .models import Trial
+from .models import Study
 
 
-# we're going to have a list of Trials that we can search, filter and paginate
+# we're going to have a list of Studies that we can search, filter and paginate
 # the ArkestraGenericFilterSet provides us with some of that machinery
-class TrialsFilterSet(ArkestraGenericFilterSet):
+class StudiesFilterSet(ArkestraGenericFilterSet):
     # the fields we want to be able to filter on
-    fields = ["date", "status", "trialtype"]
+    fields = ["date", "status", "studytype"]
 
 
-class TrialsListMixin(object):
+class StudiesListMixin(object):
     def set_items_for_entity(self):
         # if we're not in MULTIPLE_ENTITY_MODE, just leave self.items alone
         if MULTIPLE_ENTITY_MODE and self.entity:
@@ -28,7 +28,7 @@ class TrialsListMixin(object):
                 include_self=True
                 ).values_list('id', flat=True)
 
-            # get the Trials that have a relationship with any item in that list
+            # get the Studies that have a relationship with any item in that list
             self.items = self.items.filter(
                 Q(hosted_by__in=entities) | Q(publish_to__in=entities) |
                 Q(funding_body__in=entities) | Q(sponsor__in=entities) |
@@ -37,11 +37,11 @@ class TrialsListMixin(object):
 
 
 # the class that produces the list of items, based on ArkestraGenericFilterList
-class TrialsList(TrialsListMixin, ArkestraGenericFilterList):
+class StudiesList(StudiesListMixin, ArkestraGenericFilterList):
     # it must have a filter_set class
-    filter_set = TrialsFilterSet
+    filter_set = StudiesFilterSet
     # the model we're listing
-    model = Trial
+    model = Study
     # the text search fields - each one is a dictionary
     search_fields = [
         {
@@ -59,14 +59,14 @@ class TrialsList(TrialsListMixin, ArkestraGenericFilterList):
             },
         ]
     # we want to override the generic list item template
-    item_template = "clinical_trials/trial_list_item.html"
+    item_template = "clinical_studies/study_list_item.html"
 
     # we need our own build() method to override the generic one
     def build(self):
         # get the listable (by default, published and shown in lists) items
         self.items = self.model.objects.listable_objects()
         # we'll limit the items according to the appropriate entity - the
-        # method that does this is defined in the TrialsListMixin
+        # method that does this is defined in the StudiesListMixin
         self.set_items_for_entity()
         # and limit by search terms
         self.filter_on_search_terms()
@@ -76,27 +76,27 @@ class TrialsList(TrialsListMixin, ArkestraGenericFilterList):
 
 
 # the Lister class is the one that determines which lists to display, along
-# with the surrounding furniture - in the case of Trials, it's just one List,
+# with the surrounding furniture - in the case of Studies, it's just one List,
 # but we could have more
-class TrialsLister(ArkestraGenericLister):
+class StudiesLister(ArkestraGenericLister):
     # a list of available List classes
-    listkinds = [("trials", TrialsList)]
+    listkinds = [("studies", StudiesList)]
     # the List classes we want to use
-    display = "trials"
+    display = "studies"
 
 
-class TrialsMenuList(TrialsListMixin, ArkestraGenericList):
-    model = Trial
+class StudiesMenuList(StudiesListMixin, ArkestraGenericList):
+    model = Study
     heading_text = _(u"News")
 
     def build(self):
         # get the listable (by default, published and shown in lists) items
         self.items = self.model.objects.listable_objects()
         # we'll limit the items according to the appropriate entity - the
-        # method that does this is defined in the TrialsListMixin
+        # method that does this is defined in the StudiesListMixin
         self.set_items_for_entity()
 
 
-class TrialsMenuLister(ArkestraGenericLister):
-    listkinds = [("trials", TrialsMenuList)]
-    display = "trials"
+class StudiesMenuLister(ArkestraGenericLister):
+    listkinds = [("studies", StudiesMenuList)]
+    display = "studies"

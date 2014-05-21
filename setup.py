@@ -7,9 +7,9 @@ README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='arkestra-clinical-trials',
+    name='arkestra-clinical-studies',
     version='0.1',
-    packages=['arkestra_clinical_trials'],
+    packages=['arkestra_clinical_studies'],
     include_package_data=True,
     license='BSD License',  # example license
     description='Manage and publish information clinical trials in Arkestra',

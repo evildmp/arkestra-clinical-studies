@@ -1,30 +1,30 @@
-{% extends trial.get_template %}
+{% extends study.get_template %}
 {% load arkestra_date_tags typogrify_tags humanize thumbnail placeholder_tags %}
 
 {% block title %}
-	<title>{{ trial }}</title>
+	<title>{{ study }}</title>
 {% endblock %}
 
 {% block nav_local %}{% endblock nav_local %}
 
 {% block pagetitle %}
 	<h{{PAGE_TITLE_HEADING_LEVEL}}>
-        {{ trial }}{% if trial.expanded_title %}: {{ trial.expanded_title }}{% endif %}
+        {{ study }}{% if study.expanded_title %}: {{ study.expanded_title }}{% endif %}
     </h{{PAGE_TITLE_HEADING_LEVEL}}>
 
-	{% if trial.summary %}
-   		<p class="subtitle">{{ trial.summary }}</p>
+	{% if study.summary %}
+   		<p class="subtitle">{{ study.summary }}</p>
 	{% endif %}
 {% endblock pagetitle %}
 
 
 {% block main_page_body %}
-    {% thumbnail trial.image.file sidebar_image_size subject_location=trial.image.subject_location crop as image %}
+    {% thumbnail study.image.file sidebar_image_size subject_location=study.image.subject_location crop as image %}
 	{% with placeholder_width=generic_main_width %}
 		<div class="row columns3">
 	       	<div class="column firstcolumn doublecolumn">
 				{% block placeholder %}
-				    {% render_placeholder trial.body %}
+				    {% render_placeholder study.body %}
 				{% endblock placeholder %}
 			</div>
 			<div class="column lastcolumn">
@@ -33,16 +33,16 @@
                         <div><img src="{{ image.url }}" /></div>
                     {% endif %}
 				{% endblock image %}
-                {% if trial.email or trial.phone_contacts.all %}
+                {% if study.email or study.phone_contacts.all %}
                     <h{{ IN_BODY_HEADING_LEVEL }}>Contact information</h{{ IN_BODY_HEADING_LEVEL }}>
     				<dl class="not-indented">
-                        {% if trial.email %}
+                        {% if study.email %}
                             <dt>Email address</dt>
-                            <dd><a href="mailto:{{ trial.email }}">{{ trial.email }}</a></dd>
+                            <dd><a href="mailto:{{ study.email }}">{{ study.email }}</a></dd>
                             {% endif %}
-                            {% if trial.phone_contacts.all %}
+                            {% if study.phone_contacts.all %}
                             <dt>Telephone</dt>
-                            {% for phone_number in trial.phone_contacts.all %}
+                            {% for phone_number in study.phone_contacts.all %}
                                 <dd>+{{ phone_number.country_code }} {{ phone_number.area_code }} {{ phone_number.number }}{% if phone_number.internal_extension %}, ext. {{ phone_number.internal_extension }} {% endif %} {% if phone_number.label %} ({{ phone_number.label }}) {% endif %}</dd>
                             {% endfor %}
                         </dl>
@@ -51,80 +51,80 @@
                 <h{{ IN_BODY_HEADING_LEVEL }}>Key data</h{{ IN_BODY_HEADING_LEVEL }}>
 				<dl class="not-indented">
                     <dt>Status</dt>
-                    <dd>{{ trial.get_status_display }}</dd>
-    				{% if trial.isrctn %}
-    					<dt>ISRCTN {{ trial.isrctn }}</dt>
-    					<dd><a href="http://www.controlled-trials.com/ISRCTN{{ trial.isrctn }}/">ControlledTrials.com</a></dd>
-    					<dd><a href="http://www.ukctg.nihr.ac.uk/trialdetails/ISRCTN{{ trial.isrctn }}/">UK Clinical Trials Gateway</a></dd>
+                    <dd>{{ study.get_status_display }}</dd>
+    				{% if study.isrctn %}
+    					<dt>ISRCTN {{ study.isrctn }}</dt>
+    					<dd><a href="http://www.controlled-trials.com/ISRCTN{{ study.isrctn }}/">ControlledTrials.com</a></dd>
+    					<dd><a href="http://www.ukctg.nihr.ac.uk/studydetails/ISRCTN{{ study.isrctn }}/">UK Clinical Trials Gateway</a></dd>
     				{% endif %}
-    				{% if trial.eudract %}
+    				{% if study.eudract %}
     					<dt>EU Clinical Trials Register</dt>
-    					<dd><a href="https://www.clinicaltrialsregister.eu/ctr-search/search?query={{ trial.eudract }}">Trial number {{ trial.eudract }}</a></dd>
+    					<dd><a href="https://www.clinicaltrialsregister.eu/ctr-search/search?query={{ study.eudract }}">Trial number {{ study.eudract }}</a></dd>
     				{% endif %}
-    				{% if trial.ukcrn %}
+    				{% if study.ukcrn %}
     					<dt>UK Clinical Research Network</dt>
-    					<dd><a href="http://public.ukcrn.org.uk/search/StudyDetail.aspx?StudyID={{ trial.ukcrn }}">Trial number {{ trial.ukcrn }}</a></dd>
+    					<dd><a href="http://public.ukcrn.org.uk/search/StudyDetail.aspx?StudyID={{ study.ukcrn }}">Study number {{ study.ukcrn }}</a></dd>
     				{% endif %}
-    				{% if trial.nct %}
+    				{% if study.nct %}
     					<dt>ClinicalTrials.gov</dt>
-    					<dd><a href="http://clinicaltrials.gov/show/{{ trial.nct }}/">Trial number {{ trial.nct }}</a></dd>
+    					<dd><a href="http://clinicaltrials.gov/show/{{ study.nct }}/">Study number {{ study.nct }}</a></dd>
     				{% endif %}
-    				{% if trial.date %}
+    				{% if study.date %}
     					<dt>Start date</dt>
-    					<dd>{{ trial.date }}</dd>
+    					<dd>{{ study.date }}</dd>
     				{% endif %}
-    				{% if trial.end_date %}
+    				{% if study.end_date %}
     					<dt>End date</dt>
-    					<dd>{{ trial.end_date }}</dd>
+    					<dd>{{ study.end_date }}</dd>
     				{% endif %}
-    				{% if trial.grant_value %}
+    				{% if study.grant_value %}
     					<dt>Grant value</dt>
-    					<dd>{{ trial.grant_value }}</dd>
+    					<dd>{{ study.grant_value }}</dd>
     				{% endif %}
-					{% if trial.trialtype.all %}
-	 				    <dt>Trial type</dt>
-	 				    {% for trialtype in trial.trialtype.all %}
-							<dd>{{ trialtype }}</dd>
+					{% if study.studytype.all %}
+	 				    <dt>Study type</dt>
+	 				    {% for studytype in study.studytype.all %}
+							<dd>{{ studytype }}</dd>
 						{% endfor %}
 					{% endif %}
-					{% if trial.please_contact.all %}
+					{% if study.please_contact.all %}
 	 				    <dt>General enquiries</dt>
-	 				    {% for item in trial.please_contact.all %}
+	 				    {% for item in study.please_contact.all %}
 							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
 						{% endfor %}
 					{% endif %}
-					{% if trial.chief_investigators.all %}
+					{% if study.chief_investigators.all %}
 	 				    <dt>Chief investigators</dt>
-	 				    {% for item in trial.chief_investigators.all %}
+	 				    {% for item in study.chief_investigators.all %}
 							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
 						{% endfor %}
 					{% endif %}
-					{% if trial.clinical_centre.all %}
+					{% if study.clinical_centre.all %}
 	 				    <dt>Clinical centre</dt>
-	 				    {% for item in trial.clinical_centre.all %}
+	 				    {% for item in study.clinical_centre.all %}
 							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
 						{% endfor %}
 					{% endif %}
-					{% if trial.sponsor.all %}
+					{% if study.sponsor.all %}
 	 				    <dt>Sponsoring body</dt>
-	 				    {% for item in trial.sponsor.all %}
+	 				    {% for item in study.sponsor.all %}
 							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
 						{% endfor %}
 					{% endif %}
-					{% if trial.funding_body.all %}
+					{% if study.funding_body.all %}
 	 				    <dt>Funding</dt>
-	 				    {% for item in trial.funding_body.all %}
+	 				    {% for item in study.funding_body.all %}
 							<dd><a href = "{{ item.get_absolute_url }}">{{ item }}</a></dd>
 						{% endfor %}
 					{% endif %}
 				</dl>
-				{% with trial.links as links %}
+				{% with study.links as links %}
 				    {% include "includes/related_links_list.html" %}
 		        {% endwith %}
 			</div>
 		</div>
 		<ul class = "news icons">
-			<li><a href = "{{ trial.link_to_more }}">More {{ trial.hosted_by.short_name }} clinical trials</a></li>
+			<li><a href = "{{ study.link_to_more }}">More {{ study.hosted_by.short_name }} clinical studies</a></li>
 		</ul>
 	{% endwith %}
 {% endblock main_page_body %}
